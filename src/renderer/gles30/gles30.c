@@ -22,13 +22,16 @@
 	 * Taisei unplayable past the first stage. So we fake it with a draw command instead.
 	 */
 	#define BROKEN_GL_BLIT_FRAMEBUFFER 1
+#else
+	#define BROKEN_GL_BLIT_FRAMEBUFFER 0
+#endif
 
+#if defined(STATIC_GLES3) || defined(__ANDROID__)
 	/*
-	 * SDL won't let us reuse the context across windows, even if they use the same cavas.
+	 * SDL won't let us reuse the context across windows, even if they use the same canvas / surface.
 	 */
 	#define WE_CAN_ONLY_HAVE_ONE_WINDOW 1
 #else
-	#define BROKEN_GL_BLIT_FRAMEBUFFER 0
 	#define WE_CAN_ONLY_HAVE_ONE_WINDOW 0
 #endif
 

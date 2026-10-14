@@ -455,3 +455,13 @@ bool audio_bgm_looping(void) {
 BGM *audio_bgm_current(void) {
 	return B.bgm_current();
 }
+
+void audio_pause_all(void) {
+	audio_bgm_pause();
+	pause_all_sfx();
+}
+
+void audio_resume_all(void) {
+	audio_bgm_resume();
+	resume_all_sfx();
+}

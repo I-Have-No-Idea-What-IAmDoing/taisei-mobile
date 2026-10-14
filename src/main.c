@@ -46,7 +46,9 @@
 #include FT_FREETYPE_H
 #include <unibreakbase.h>
 #include <locale.h>
+#ifdef TAISEI_BUILDCONF_HAVE_LIBPNG
 #include <png.h>
+#endif
 #include <webp/decode.h>
 #include <zlib.h>
 #include <zstd.h>
@@ -110,6 +112,9 @@ static void init_log(void) {
 	log_init(LOG_DEFAULT_LEVELS);
 	log_add_output(lvls_stdout, SDL_RWFromFP(stdout, false), log_formatter_console);
 	log_add_output(lvls_stderr, SDL_RWFromFP(stderr, false), log_formatter_console);
+#ifdef __ANDROID__
+	log_add_android_output(LOG_DEFAULT_LEVELS);
+#endif
 }
 
 static void init_log_file(void) {
@@ -191,8 +196,10 @@ static void log_lib_versions(void) {
 	log_info("Compiled against zlib %s", ZLIB_VERSION);
 	log_info("Using zlib %s", zlibVersion());
 
+#ifdef TAISEI_BUILDCONF_HAVE_LIBPNG
 	log_info("Compiled against libpng %s", PNG_LIBPNG_VER_STRING);
 	log_info("Using libpng %s", png_get_libpng_ver(NULL));
+#endif
 
 	int webp_v = WebPGetDecoderVersion();
 	log_info("Using libwebpdecoder %d.%d.%d", (webp_v >> 16) & 0xff, (webp_v >> 8) & 0xff, webp_v & 0xff);

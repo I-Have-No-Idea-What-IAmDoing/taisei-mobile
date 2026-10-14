@@ -299,14 +299,41 @@ static FloatExtent video_get_viewport_size_for_framebuffer(IntExtent framebuffer
 }
 
 static void video_get_viewport_for_framebuffer(FloatRect *vp, IntExtent framebuffer_size) {
-	vp->extent = video_get_viewport_size_for_framebuffer(framebuffer_size);
-	vp->x = (int)((framebuffer_size.w - vp->w) * 0.5);
-	vp->y = (int)((framebuffer_size.h - vp->h) * 0.5);
+	SDL_Rect safe_rect = {};
+	float safe_x = 0;
+	float safe_y = 0;
+	float safe_w = framebuffer_size.w;
+	float safe_h = framebuffer_size.h;
+
+	if(video.window && SDL_GetWindowSafeArea(video.window, &safe_rect) && safe_rect.w > 0 && safe_rect.h > 0) {
+		float scale_x = video.current.width > 0 ? (float)framebuffer_size.w / video.current.width : 1.0f;
+		float scale_y = video.current.height > 0 ? (float)framebuffer_size.h / video.current.height : 1.0f;
+
+		safe_x = safe_rect.x * scale_x;
+		safe_y = safe_rect.y * scale_y;
+		safe_w = safe_rect.w * scale_x;
+		safe_h = safe_rect.h * scale_y;
+	}
+
+	float w = safe_w;
+	float h = safe_h;
+	float r = w / h;
+
+	if(r > VIDEO_ASPECT_RATIO) {
+		w = h * VIDEO_ASPECT_RATIO;
+	} else if(r < VIDEO_ASPECT_RATIO) {
+		h = w / VIDEO_ASPECT_RATIO;
+	}
+
+	vp->w = w;
+	vp->h = h;
+	vp->x = safe_x + (int)((safe_w - w) * 0.5f);
+	vp->y = safe_y + (int)((safe_h - h) * 0.5f);
 }
 
 void video_get_viewport_size(float *width, float *height) {
-	IntExtent fb = video_get_screen_framebuffer_size();
-	FloatExtent vp = video_get_viewport_size_for_framebuffer(fb);
+	FloatRect vp;
+	video_get_viewport(&vp);
 
 	*width = vp.w;
 	*height = vp.h;
@@ -848,6 +875,11 @@ static bool video_handle_event(SDL_Event *event, void *arg) {
 			video_update_mode_settings();
 			break;
 
+		case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
+			log_debug("SDL_EVENT_WINDOW_SAFE_AREA_CHANGED");
+			video_update_mode_settings();
+			break;
+
 		case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
 			config_set_int(CONFIG_FULLSCREEN, true);
 			break;
@@ -951,6 +983,8 @@ void video_init(const VideoInitParams *params) {
 		// We can not start in fullscreen in the browser properly, so disable it here.
 		// Fullscreen is still accessible via the settings menu and the shortcut key.
 		config_set_int(CONFIG_FULLSCREEN, false);
+	} else if(!strcmp(driver, "android") || !strcmp(driver, "uikit")) {
+		video_query_capability = video_query_capability_alwaysfullscreen;
 	} else if(!strcmp(driver, "KMSDRM")) {
 		video.backend = VIDEO_BACKEND_KMSDRM;
 		video_query_capability = video_query_capability_alwaysfullscreen;

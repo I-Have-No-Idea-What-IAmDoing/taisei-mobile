@@ -478,17 +478,35 @@ else
         link_with : libtaisei,
     )
 
-    have_taisei_exe = true
-    taisei = executable(taisei_basename, taisei_main_src,
-        dependencies : stages_live_reload ? libtaisei_dep.as_link_whole() : libtaisei_dep,
-        win_subsystem : get_option('win_console') ? 'console' : 'windows',
-        install : true,
-        install_dir : bindir,
-        export_dynamic : stages_live_reload,
-        link_args : taisei_link_args,
+    is_ios_target = (
+        host_machine.system() == 'ios' or
+        (host_machine.system() == 'darwin' and meson.get_external_property('target_ios', false))
     )
 
-    if host_machine.system() == 'darwin'
+    if host_machine.system() == 'android'
+        taisei = shared_library(
+            'main',
+            taisei_main_src,
+            dependencies : libtaisei_dep.as_link_whole(),
+            link_args : taisei_link_args + ['-landroid', '-llog', '-lGLESv3', '-lEGL', '-Wl,-z,max-page-size=16384'],
+            install : true,
+            install_dir : lib_path,
+        )
+    elif is_ios_target
+        taisei = libtaisei
+    else
+        have_taisei_exe = true
+        taisei = executable(taisei_basename, taisei_main_src,
+            dependencies : stages_live_reload ? libtaisei_dep.as_link_whole() : libtaisei_dep,
+            win_subsystem : get_option('win_console') ? 'console' : 'windows',
+            install : true,
+            install_dir : bindir,
+            export_dynamic : stages_live_reload,
+            link_args : taisei_link_args,
+        )
+    endif
+
+    if host_machine.system() == 'darwin' and not is_ios_target
         have_debug_syms_target = true
         debug_symbols_file = '@0@.dwarf'.format(taisei_basename)
         debug_symbols = custom_target(debug_symbols_file,
@@ -503,7 +521,7 @@ else
             input : taisei,
             output : debug_symbols_file
         )
-    else
+    elif not is_ios_target and host_machine.system() != 'android'
         have_debug_syms_target = true
         debug_symbols_file = '@0@.dwarf'.format(taisei_basename)
         debug_symbols = custom_target(debug_symbols_file,

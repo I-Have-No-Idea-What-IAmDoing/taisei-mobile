@@ -3,7 +3,7 @@ subdir('common')
 
 renderer_opts = {
     'gl33' : get_option('r_gl33').require(
-        host_machine.system() not in ['nx', 'emscripten'],
+        host_machine.system() not in ['nx', 'emscripten', 'android', 'ios'],
         error_message : 'OpenGL 3.3 is not supported on this platform'),
     'gles30' : get_option('r_gles30').disable_auto_if(
         not (shader_transpiler_enabled or transpile_glsl)),

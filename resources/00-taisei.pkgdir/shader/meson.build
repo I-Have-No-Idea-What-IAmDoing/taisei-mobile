@@ -159,7 +159,7 @@ spvc_vert_args = [
     '--stage', 'vert',
 ]
 
-transpile_glsl = (host_machine.system() in ['emscripten', 'nx'])
+transpile_glsl = (host_machine.system() in ['emscripten', 'nx', 'android'])
 opt_validate_glsl = get_option('validate_glsl')
 
 if opt_validate_glsl.disabled() and transpile_glsl

@@ -12,6 +12,7 @@
 #include "global.h"
 #include "transition.h"
 #include "video.h"
+#include "audio/audio.h"
 
 static hrtime_t keyrepeat_paused_until;
 static int global_handlers_lock = 0;
@@ -338,11 +339,38 @@ static bool events_handler_debug_winevt(SDL_Event *event, void *arg) {
 	return false;
 }
 
+static bool events_handler_mobile_lifecycle(SDL_Event *event, void *arg) {
+	switch(event->type) {
+		case SDL_EVENT_WILL_ENTER_BACKGROUND:
+		case SDL_EVENT_DID_ENTER_BACKGROUND:
+			log_info("Application entered background");
+			if(global.stage != NULL && !global.gameover) {
+				events_emit(TE_GAME_PAUSE, 0, NULL, NULL);
+			}
+			audio_pause_all();
+			global.is_backgrounded = true;
+			return true;
+
+		case SDL_EVENT_WILL_ENTER_FOREGROUND:
+		case SDL_EVENT_DID_ENTER_FOREGROUND:
+			log_info("Application entered foreground");
+			global.is_backgrounded = false;
+			audio_resume_all();
+			return true;
+	}
+
+	return false;
+}
+
 static EventHandler default_handlers[] = {
 #ifdef DEBUG_WINDOW_EVENTS
 	{ .proc = events_handler_debug_winevt,          .priority = EPRIO_SYSTEM,       .event_type = SDL_WINDOWEVENT },
 #endif
 	{ .proc = events_handler_quit,                  .priority = EPRIO_SYSTEM,       .event_type = SDL_EVENT_QUIT },
+	{ .proc = events_handler_mobile_lifecycle,      .priority = EPRIO_SYSTEM,       .event_type = SDL_EVENT_WILL_ENTER_BACKGROUND },
+	{ .proc = events_handler_mobile_lifecycle,      .priority = EPRIO_SYSTEM,       .event_type = SDL_EVENT_DID_ENTER_BACKGROUND },
+	{ .proc = events_handler_mobile_lifecycle,      .priority = EPRIO_SYSTEM,       .event_type = SDL_EVENT_WILL_ENTER_FOREGROUND },
+	{ .proc = events_handler_mobile_lifecycle,      .priority = EPRIO_SYSTEM,       .event_type = SDL_EVENT_DID_ENTER_FOREGROUND },
 	{ .proc = events_handler_keyrepeat_workaround,  .priority = EPRIO_CAPTURE,      .event_type = 0 },
 	{ .proc = events_handler_clipboard,             .priority = EPRIO_CAPTURE,      .event_type = SDL_EVENT_KEY_DOWN },
 	{ .proc = events_handler_hotkeys,               .priority = EPRIO_HOTKEYS,      .event_type = SDL_EVENT_KEY_DOWN },

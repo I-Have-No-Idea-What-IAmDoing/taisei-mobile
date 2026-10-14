@@ -311,6 +311,7 @@ config.set('TAISEI_BUILDCONF_HAVE_TIMESPEC', have_timespec)
 config.set('TAISEI_BUILDCONF_HAVE_INT128', cc.sizeof('__int128') == 16)
 config.set('TAISEI_BUILDCONF_HAVE_LONG_DOUBLE', cc.sizeof('long double') > 8)
 config.set('TAISEI_BUILDCONF_HAVE_POSIX', have_posix)
+config.set('TAISEI_BUILDCONF_HAVE_LIBPNG', dep_png.found())
 
 have_sincos = use_openlibm or cc.has_function('sincos', dependencies : dep_m)
 config.set('TAISEI_BUILDCONF_HAVE_SINCOS', have_sincos)
@@ -461,7 +462,9 @@ prefer_relpath_systems = [
 
 force_relpath_systems = [
     'emscripten',
-    'nx'
+    'nx',
+    'android',
+    'ios',
 ]
 
 opt_install_macos_bundle = get_option('install_macos_bundle')

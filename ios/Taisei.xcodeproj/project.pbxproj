@@ -1,0 +1,271 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000012900000100000001 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B10000012900000100000001 /* Info.plist */; };
+		A10000022900000100000002 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000022900000100000002 /* Metal.framework */; };
+		A10000032900000100000003 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000032900000100000003 /* UIKit.framework */; };
+		A10000042900000100000004 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000042900000100000004 /* AudioToolbox.framework */; };
+		A10000052900000100000005 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000052900000100000005 /* CoreAudio.framework */; };
+		A10000062900000100000006 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000062900000100000006 /* QuartzCore.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B10000002900000100000000 /* Taisei.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Taisei.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000012900000100000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B10000022900000100000002 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		B10000032900000100000003 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B10000042900000100000004 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		B10000052900000100000005 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		B10000062900000100000006 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C10000002900000100000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000022900000100000002 /* Metal.framework in Frameworks */,
+				A10000032900000100000003 /* UIKit.framework in Frameworks */,
+				A10000042900000100000004 /* AudioToolbox.framework in Frameworks */,
+				A10000052900000100000005 /* CoreAudio.framework in Frameworks */,
+				A10000062900000100000006 /* QuartzCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D10000002900000100000000 = {
+			isa = PBXGroup;
+			children = (
+				B10000012900000100000001 /* Info.plist */,
+				D10000012900000100000001 /* Frameworks */,
+				D10000022900000100000002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D10000012900000100000001 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B10000022900000100000002 /* Metal.framework */,
+				B10000032900000100000003 /* UIKit.framework */,
+				B10000042900000100000004 /* AudioToolbox.framework */,
+				B10000052900000100000005 /* CoreAudio.framework */,
+				B10000062900000100000006 /* QuartzCore.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D10000022900000100000002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B10000002900000100000000 /* Taisei.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E10000002900000100000000 /* Taisei */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F10000002900000100000000 /* Build configuration list for PBXNativeTarget "Taisei" */;
+			buildPhases = (
+				F20000002900000100000000 /* Build Meson Dependencies */,
+				C10000002900000100000000 /* Frameworks */,
+				F30000002900000100000000 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Taisei;
+			productName = Taisei;
+			productReference = B10000002900000100000000 /* Taisei.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		010000002900000100000000 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					E10000002900000100000000 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 020000002900000100000000 /* Build configuration list for PBXProject "Taisei" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D10000002900000100000000;
+			productRefGroup = D10000022900000100000002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E10000002900000100000000 /* Taisei */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F30000002900000100000000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000012900000100000001 /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F20000002900000100000000 /* Build Meson Dependencies */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Meson Dependencies";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$PROJECT_DIR/build-ios.sh\" \"$PLATFORM_NAME\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		030000002900000100000000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		040000002900000100000000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F40000002900000100000000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../build-ios-$(PLATFORM_NAME)/src",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ltaisei",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.taiseiproject.Taisei;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F50000002900000100000000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../build-ios-$(PLATFORM_NAME)/src",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ltaisei",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.taiseiproject.Taisei;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		020000002900000100000000 /* Build configuration list for PBXProject "Taisei" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				030000002900000100000000 /* Debug */,
+				040000002900000100000000 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F10000002900000100000000 /* Build configuration list for PBXNativeTarget "Taisei" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F40000002900000100000000 /* Debug */,
+				F50000002900000100000000 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = 010000002900000100000000 /* Project object */;
+}

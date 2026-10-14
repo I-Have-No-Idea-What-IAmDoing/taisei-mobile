@@ -8,6 +8,7 @@
 
 #include "eventloop_private.h"
 
+#include "events.h"
 #include "global.h"
 #include "util/env.h"
 
@@ -49,6 +50,14 @@ void eventloop_run(void) {
 
 begin_main_loop:
 	while(frame != NULL) {
+		while(global.is_backgrounded && !taisei_quit_requested()) {
+			SDL_Event evt;
+			if(SDL_WaitEvent(&evt)) {
+				SDL_PushEvent(&evt);
+				events_poll(NULL, 0);
+			}
+			evloop.frame_times.next = time_get() + evloop.frame_times.target;
+		}
 
 #ifdef DEBUG
 		if(uncapped_rendering_env) {

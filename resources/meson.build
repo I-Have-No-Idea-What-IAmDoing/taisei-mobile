@@ -119,7 +119,7 @@ else
     bindist_deps += l10n_mo_targets
 endif
 
-if host_machine.system() == 'nx'
+if host_machine.system() in ['nx', 'android']
     # Package shaders that were transpiled
     shader_pkg_zip = '01-es-shaders.zip'
     shader_pkg_path = join_paths(shaders_build_dir, '..')

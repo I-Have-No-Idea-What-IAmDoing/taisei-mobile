@@ -36,6 +36,8 @@ endforeach
 
 if host_machine.system() == 'emscripten'
     sdl3_options.add_cmake_defines({ 'EMSCRIPTEN' : true })
+elif host_machine.system() == 'android'
+    sdl3_options.add_cmake_defines({ 'ANDROID' : true })
 endif
 
 sdl3_subproject = cmake.subproject('sdl3', options : sdl3_options)

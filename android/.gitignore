@@ -1,0 +1,14 @@
+*.iml
+.gradle/
+local.properties
+.idea/
+.DS_Store
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Build outputs and staged assets/libraries
+app/build/
+app/src/main/assets/
+app/src/main/jniLibs/

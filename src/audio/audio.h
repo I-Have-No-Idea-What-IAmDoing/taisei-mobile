@@ -68,4 +68,7 @@ void resume_all_sfx(void);
 void stop_all_sfx(void);
 void update_all_sfx(void); // checks if loops need to be stopped
 
+void audio_pause_all(void);
+void audio_resume_all(void);
+
 double audioutil_loopaware_position(double rt_pos, double duration, double loop_start);

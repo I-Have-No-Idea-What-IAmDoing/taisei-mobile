@@ -255,7 +255,9 @@ static void log_dispatch(LogEntry *entry, StringBuffer *fmt_buf) {
 			strbuf_clear(fmt_buf);
 			size_t slen = l->formatter.format(&l->formatter, fmt_buf, entry);
 			assert_nolog(fmt_buf->buf_size >= slen);
-			SDL_WriteIO(l->out, fmt_buf->start, slen);
+			if(slen > 0) {
+				SDL_WriteIO(l->out, fmt_buf->start, slen);
+			}
 		}
 	}
 
@@ -762,6 +764,39 @@ static int log_fmtfile_format(FormatterObj *obj, StringBuffer *buf, LogEntry *en
 void log_formatter_file(FormatterObj *obj, SDL_IOStream *output) {
 	obj->format = log_fmtfile_format;
 }
+
+#ifdef __ANDROID__
+#include <android/log.h>
+
+static int android_prio_from_level(LogLevel lvl) {
+	switch(lvl & LOG_ALL) {
+		case LOG_DEBUG: return ANDROID_LOG_DEBUG;
+		case LOG_INFO:  return ANDROID_LOG_INFO;
+		case LOG_WARN:  return ANDROID_LOG_WARN;
+		case LOG_ERROR: return ANDROID_LOG_ERROR;
+		case LOG_FATAL: return ANDROID_LOG_FATAL;
+		default:        return ANDROID_LOG_INFO;
+	}
+}
+
+static int log_fmtandroid_format(FormatterObj *obj, StringBuffer *buf, LogEntry *entry) {
+	int prio = android_prio_from_level(entry->level);
+	if(entry->module) {
+		__android_log_print(prio, "Taisei", "%s>%s: %s", entry->module, entry->func ? entry->func : "", entry->message);
+	} else {
+		__android_log_print(prio, "Taisei", "%s", entry->message);
+	}
+	return 0;
+}
+
+static void log_formatter_android(FormatterObj *obj, SDL_IOStream *output) {
+	obj->format = log_fmtandroid_format;
+}
+
+void log_add_android_output(LogLevel levels) {
+	log_add_output(levels, SDL_IOFromConstMem("", 0), log_formatter_android);
+}
+#endif
 
 static char *copy_pattern(const char *p) {
 	const char *orig = p;
