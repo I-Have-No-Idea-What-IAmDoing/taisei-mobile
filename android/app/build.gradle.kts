@@ -32,6 +32,12 @@ android {
         }
         debug {
             isDebuggable = true
+            isJniDebuggable = true
+            packaging {
+                jniLibs {
+                    keepDebugSymbols.add("**/*.so")
+                }
+            }
         }
     }
 
@@ -118,6 +124,9 @@ abis.forEach { (abi, crossName) ->
             "meson", "setup", buildDirName,
             "--cross-file", crossFile,
             "--cross-file", dynamicCrossFile.absolutePath,
+            "-Dbuildtype=debugoptimized",
+            "-Ddeveloper=true",
+            "-Dstrip=false",
             "-Dallocator=libc",
             "-Dr_gl33=disabled",
             "-Dr_gles30=enabled",

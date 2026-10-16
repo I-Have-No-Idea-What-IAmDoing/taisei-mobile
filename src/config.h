@@ -99,6 +99,7 @@
 	CONFIGDEF_INT       (VID_DISPLAY,               "vid_display",                          0) \
 	CONFIGDEF_INT       (VID_RESIZABLE,             "vid_resizable",                        0) \
 	CONFIGDEF_INT       (VID_FRAMESKIP,             "vid_frameskip",                        1) \
+	CONFIGDEF_INT       (ORIENTATION,               "orientation",                          0) \
 	CONFIGDEF_INT       (VSYNC,                     "vsync",                                CONFIG_VSYNC_DEFAULT) \
 	CONFIGDEF_INT       (MIXER_CHUNKSIZE,           "mixer_chunksize",                      CONFIG_CHUNKSIZE_DEFAULT) \
 	CONFIGDEF_FLOAT     (SFX_VOLUME,                "sfx_volume",                           0.5) \

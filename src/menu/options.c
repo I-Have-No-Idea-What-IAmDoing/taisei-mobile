@@ -409,6 +409,13 @@ static int bind_common_onoffplus_set(OptionBinding *b, int v) {
 #define bind_common_int_get bind_common_onoff_inverted_get
 #define bind_common_int_set bind_common_onoff_inverted_set
 
+static int bind_orientation_set(OptionBinding *b, int v) {
+	int res = config_set_int(b->configentry, v);
+	video_check_orientation_changed();
+	events_emit(TE_VIDEO_MODE_CHANGED, 0, NULL, NULL);
+	return res;
+}
+
 // BT_VideoDisplay: fullscreen display number
 static OptionBinding* bind_video_display(int cfgentry) {
 	OptionBinding *bind = bind_new();
@@ -802,6 +809,12 @@ static MenuData* create_options_menu_video(MenuData *parent) {
 		b = bind_option(CONFIG_VID_RESIZABLE, bind_common_onoff_get, bind_common_onoff_set)
 	);	bind_onoff(b);
 		b->dependence = bind_resizable_dependence;
+
+	add_menu_entry(m, N_("Screen orientation"), do_nothing,
+		b = bind_option(CONFIG_ORIENTATION, bind_common_int_get, bind_orientation_set)
+	);	bind_addvalue(b, N_("auto"));
+		bind_addvalue(b, N_("landscape"));
+		bind_addvalue(b, N_("portrait"));
 
 	add_menu_separator(m);
 

@@ -10,6 +10,7 @@
 
 #include "config.h"
 #include "global.h"
+#include "stage.h"
 #include "transition.h"
 #include "video.h"
 #include "audio/audio.h"
@@ -189,6 +190,12 @@ static void push_event(SDL_Event *e) {
 
 void events_poll(EventHandler *handlers, EventFlags flags) {
 	events_apply_flags(flags);
+
+	if(video_check_orientation_changed()) {
+		stage_pause_game();
+		events_emit(TE_GAME_PAUSE, 0, NULL, NULL);
+	}
+
 	events_emit(TE_FRAME, 0, NULL, NULL);
 
 	++global_handlers_lock;

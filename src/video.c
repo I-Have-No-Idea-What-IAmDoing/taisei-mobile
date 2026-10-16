@@ -15,6 +15,7 @@
 #include "memory/memory.h"
 #include "memory/scratch.h"
 #include "renderer/api.h"
+#include "stage.h"
 #include "stagedraw.h"
 #include "stageinfo.h"
 #include "taskmanager.h"
@@ -41,6 +42,8 @@ static struct {
 	VideoMode current;
 	VideoBackend backend;
 	double scaling_factor;
+	VideoOrientation orientation;
+	bool orientation_initialized;
 
 	struct {
 		char *name_prefix;
@@ -61,6 +64,7 @@ static struct {
 #define FRAMEDUMP_FILENAME_FORMAT "%08u" FRAMEDUMP_FILENAME_SUFFIX
 
 VideoCapabilityState (*video_query_capability)(VideoCapability cap);
+static void video_update_mode_settings(void);
 
 typedef struct ScreenshotTaskData {
 	char *dest_path;     // NULL if in framedump mode
@@ -155,7 +159,7 @@ static VideoCapabilityState video_query_capability_alwaysfullscreen(VideoCapabil
 			return VIDEO_ALWAYS_ENABLED;
 
 		case VIDEO_CAP_EXTERNAL_RESIZE:
-			return VIDEO_NEVER_AVAILABLE;
+			return VIDEO_ALWAYS_ENABLED;
 
 		// XXX: Might not be actually working, but let's be optimistic.
 		case VIDEO_CAP_CHANGE_RESOLUTION:
@@ -279,9 +283,42 @@ static int video_compare_modes(const void *a, const void *b) {
 }
 
 static IntExtent video_get_screen_framebuffer_size(void) {
-	IntExtent s;
-	SDL_GetWindowSizeInPixels(video.window, &s.w, &s.h);
-	return s;
+	IntExtent s = { 0, 0 };
+	if(video.window && SDL_GetWindowSizeInPixels(video.window, &s.w, &s.h) && s.w > 0 && s.h > 0) {
+		return s;
+	}
+	if(video.current.width > 0 && video.current.height > 0) {
+		return (IntExtent){ video.current.width, video.current.height };
+	}
+	return (IntExtent){ SCREEN_W, SCREEN_H };
+}
+
+VideoOrientation video_get_orientation(void) {
+	int cfg_orient = config_get_int(CONFIG_ORIENTATION);
+	if(cfg_orient == 1) {
+		return VIDEO_ORIENT_LANDSCAPE;
+	} else if(cfg_orient == 2) {
+		return VIDEO_ORIENT_PORTRAIT;
+	}
+
+	IntExtent fb = video_get_screen_framebuffer_size();
+	if(fb.w > 0 && fb.h > 0) {
+		return (fb.w < fb.h) ? VIDEO_ORIENT_PORTRAIT : VIDEO_ORIENT_LANDSCAPE;
+	}
+	if(video.current.width > 0 && video.current.height > 0) {
+		return (video.current.width < video.current.height) ? VIDEO_ORIENT_PORTRAIT : VIDEO_ORIENT_LANDSCAPE;
+	}
+	return VIDEO_ORIENT_LANDSCAPE;
+}
+
+bool video_check_orientation_changed(void) {
+	VideoOrientation current = video_get_orientation();
+	if(video.orientation_initialized && video.orientation != current) {
+		log_info("Video orientation changed (poll): %d -> %d", video.orientation, current);
+		video_update_mode_settings();
+		return true;
+	}
+	return false;
 }
 
 static FloatExtent video_get_viewport_size_for_framebuffer(IntExtent framebuffer_size) {
@@ -483,6 +520,13 @@ static void video_update_scaling_factor(void) {
 }
 
 static void video_update_vsync(void) {
+#if defined(__ANDROID__) || defined(__IPHONEOS__)
+	if(global.frameskip) {
+		r_vsync(VSYNC_NONE);
+	} else {
+		r_vsync(VSYNC_NORMAL);
+	}
+#else
 	if(global.frameskip || config_get_int(CONFIG_VSYNC) == 0) {
 		r_vsync(VSYNC_NONE);
 	} else {
@@ -491,6 +535,7 @@ static void video_update_vsync(void) {
 			default: r_vsync(VSYNC_ADAPTIVE); break;
 		}
 	}
+#endif
 }
 
 static void video_update_mode_settings(void) {
@@ -500,7 +545,27 @@ static void video_update_mode_settings(void) {
 		SDL_ShowCursor();
 	}
 
+	int cfg_orient = config_get_int(CONFIG_ORIENTATION);
+	if(cfg_orient == 1) {
+		SDL_SetHintWithPriority(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight", SDL_HINT_OVERRIDE);
+	} else if(cfg_orient == 2) {
+		SDL_SetHintWithPriority(SDL_HINT_ORIENTATIONS, "Portrait PortraitUpsideDown", SDL_HINT_OVERRIDE);
+	} else {
+		SDL_SetHintWithPriority(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight Portrait PortraitUpsideDown", SDL_HINT_OVERRIDE);
+	}
+
 	SDL_GetWindowSize(video.window, &video.current.width, &video.current.height);
+
+	VideoOrientation current_orient = video_get_orientation();
+	if(video.orientation_initialized && video.orientation != current_orient) {
+		log_info("Video orientation changed: %d -> %d", video.orientation, current_orient);
+		video.orientation = current_orient;
+		stage_pause_game();
+		events_emit(TE_GAME_PAUSE, 0, NULL, NULL);
+	} else if(!video.orientation_initialized) {
+		video.orientation = current_orient;
+		video.orientation_initialized = true;
+	}
 
 	video_update_vsync();
 	video_update_scaling_factor();
@@ -581,7 +646,9 @@ static void video_new_window(uint display, uint w, uint h, bool fs, bool resizab
 
 	if(fs) {
 		flags |= SDL_WINDOW_FULLSCREEN;
-	} else if(resizable) {
+	}
+
+	if(resizable) {
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
@@ -824,6 +891,7 @@ static void video_init_sdl(void) {
 	// XXX: workaround for an SDL bug: https://bugzilla.libsdl.org/show_bug.cgi?id=4127
 	// TODO: test if still needed for SDL3 (but in any case it won't hurt)
 	SDL_SetHintWithPriority(SDL_HINT_FRAMEBUFFER_ACCELERATION, "0", SDL_HINT_OVERRIDE);
+	SDL_SetHintWithPriority(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight Portrait PortraitUpsideDown", SDL_HINT_OVERRIDE);
 
 	if(!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
 		log_sdl_error(LOG_FATAL, "SDL_InitSubSystem");
@@ -865,8 +933,15 @@ static bool video_handle_config_event(SDL_Event *evt, void *arg) {
 
 static bool video_handle_event(SDL_Event *event, void *arg) {
 	switch(event->type) {
+		case SDL_EVENT_WINDOW_RESIZED:
 		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
-			log_debug("SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED: %ix%i", event->window.data1, event->window.data2);
+			log_debug("Window size/pixels changed: %ix%i", event->window.data1, event->window.data2);
+			video_update_mode_settings();
+			break;
+
+		case SDL_EVENT_DISPLAY_ORIENTATION:
+		case SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED:
+			log_debug("Display orientation or mode changed");
 			video_update_mode_settings();
 			break;
 
@@ -1035,6 +1110,9 @@ void video_init(const VideoInitParams *params) {
 	);
 
 	video_update_scaling_factor();
+
+	video.orientation = video_get_orientation();
+	video.orientation_initialized = true;
 
 	events_register_handler(&(EventHandler) {
 		.proc = video_handle_event,

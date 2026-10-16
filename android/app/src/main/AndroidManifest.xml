@@ -7,12 +7,13 @@
     <application
         android:allowBackup="true"
         android:label="Taisei Project"
-        android:hasCode="true">
+        android:hasCode="true"
+        android:debuggable="true">
         <activity
             android:name=".TaiseiActivity"
             android:label="Taisei Project"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
+            android:screenOrientation="fullSensor"
             android:configChanges="orientation|keyboardHidden|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>

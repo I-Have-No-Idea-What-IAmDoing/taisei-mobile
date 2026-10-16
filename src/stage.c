@@ -301,6 +301,17 @@ static void stage_pause(StageFrameState *fstate) {
 	stage_enter_ingame_menu(m, NULL, CALLCHAIN(stage_unpause, fstate));
 }
 
+void stage_pause_game(void) {
+	if(_current_stage_state != NULL && !_current_stage_state->paused && !global.gameover && global.gameover != GAMEOVER_TRANSITIONING && !stage_is_skip_mode()) {
+		log_info("stage_pause_game: pausing active stage");
+		stage_pause(_current_stage_state);
+	}
+}
+
+bool stage_is_active(void) {
+	return _current_stage_state != NULL && !_current_stage_state->paused && !global.gameover;
+}
+
 static void stage_do_quickload(StageFrameState *fstate);
 
 static void stage_continue_game(void) {

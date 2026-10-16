@@ -67,6 +67,11 @@ typedef enum VideoCapabilityState {
 	VIDEO_CURRENTLY_UNAVAILABLE,
 } VideoCapabilityState;
 
+typedef enum VideoOrientation {
+	VIDEO_ORIENT_LANDSCAPE,
+	VIDEO_ORIENT_PORTRAIT,
+} VideoOrientation;
+
 void video_init(const VideoInitParams *params);
 void video_post_init(void);
 void video_shutdown(void);
@@ -74,6 +79,8 @@ void video_set_mode(uint display, uint w, uint h, bool fs, bool resizable);
 void video_set_fullscreen(bool fullscreen);
 void video_get_viewport(FloatRect *vp);
 void video_get_viewport_size(float *width, float *height);
+VideoOrientation video_get_orientation(void);
+bool video_check_orientation_changed(void);
 bool video_is_fullscreen(void);
 bool video_is_resizable(void);
 extern VideoCapabilityState (*video_query_capability)(VideoCapability cap);
